@@ -1,0 +1,12 @@
+Let me summarize the payloads for our RestAPIs:
+– Requests:
+
+LoginRequest: { username, password }
+SignupRequest: { username, email, password }
+– Responses:
+
+JwtResponse: { token, type, id, username, email, roles }
+MessageResponse: { message }
+To keep the tutorial not so long, I don’t show these POJOs here.
+You can find details for payload classes in source code of the project on Github.
+

@@ -1,0 +1,66 @@
+The Refresh Token has different value and expiration time to the Access Token.
+Regularly we configure the expiration time of Refresh Token larger than Access Token’s.
+
+Open application.properties for configuring App properties:
+
+# Spring Datasource, Spring Data...
+# App Properties
+bezkoder.app.jwtSecret= bezKoderSecretKey
+bezkoder.app.jwtExpirationMs= 3600000
+bezkoder.app.jwtRefreshExpirationMs= 86400000
+## For test
+#bezkoder.app.jwtExpirationMs= 60000
+#bezkoder.app.jwtRefreshExpirationMs= 120000
+
+Update JwtUtils class. Now it has 3 main funtions:
+
+generate a JWT from username
+get username from JWT
+validate a JWT: JWT Access Token is expired with ExpiredJwtException
+
+
+Refresh Token Request and Response
+Update the payloads for our RestAPIs:
+– Requests:
+
+TokenRefreshRequest: { refreshToken }
+– Responses:
+
+JwtResponse: { accessToken, type, refreshToken, id, username, email, roles }
+MessageResponse: { message }
+TokenRefreshResponse: { accessToken, type, refreshToken }
+
+Renew JWT Token in Spring Boot
+In the AuthController class, we:
+
+update the method for /signin endpoint with Refresh Token
+expose the POST API for creating new Access Token from received Refresh Token
+
+In refreshtoken() method:
+
+Firstly, we get the Refresh Token from request data
+Next, get the RefreshToken object {id, user, token, expiryDate} from raw Token using RefreshTokenService
+We verify the token (expired or not) basing on expiryDate field
+Continue to use user field of RefreshToken object as parameter to generate new Access Token using JwtUtils
+Return TokenRefreshResponse if everything is done
+Or else, throw TokenRefreshException
+
+Create Refresh Token Service
+Refresh Token class
+This class has one-to-one relationship with User class.
+
+Refresh Token Repository
+Before creating the service, we need RefreshTokenRepository with finder methods:
+
+Refresh Token Service
+After that, we have the RefreshTokenService service which uses RefreshTokenRepository above for providing several useful methods:
+
+findByToken(): Find a RefreshToken based on the natural id i.e the token itself
+createRefreshToken(): Create and return a new Refresh Token
+verifyExpiration(): Verify whether the token provided has expired or not. If the token was expired, delete it from
+database and throw TokenRefreshException
+
+Handle Token Refresh Exception
+Now we need to create TokenRefreshException class that extends RuntimeException.
+
+Let’s do the final step. We’re gonna create a RestControllerAdvice.

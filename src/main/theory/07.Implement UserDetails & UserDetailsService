@@ -1,0 +1,17 @@
+If the authentication process is successful, we can get User’s information such as username, password,
+authorities from an Authentication object.
+
+Authentication authentication =
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(username, password)
+        );
+UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+// userDetails.getUsername()
+// userDetails.getPassword()
+// userDetails.getAuthorities()
+
+Look at the code above, you can notice that we convert Set<Role> into List<GrantedAuthority>. It is important to work
+with Spring Security and Authentication object later.
+
+As I have said before, we need UserDetailsService for getting UserDetails object. You can look at UserDetailsService
+interface that has only one method: So we implement it and override loadUserByUsername() method.

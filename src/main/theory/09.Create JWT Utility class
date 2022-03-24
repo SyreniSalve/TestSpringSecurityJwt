@@ -1,0 +1,7 @@
+This class has 3 functions:
+
+generate a JWT from username, date, expiration, secret
+get username from JWT
+validate a JWT
+
+Remember that we’ve added bezkoder.app.jwtSecret and bezkoder.app.jwtExpirationMs properties in application.properties file.
